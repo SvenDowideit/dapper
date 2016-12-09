@@ -26,16 +26,17 @@ var (
 )
 
 type Dapperfile struct {
-	File     string
-	Mode     string
-	docker   string
-	env      Context
-	Socket   bool
-	NoOut    bool
-	Args     []string
-	From     string
-	Quiet    bool
-	hostArch string
+	File            string
+	Mode            string
+	docker          string
+	env             Context
+	Socket          bool
+	NoOut           bool
+	Args            []string
+	From            string
+	Quiet           bool
+	hostArch        string
+	CommitContainer bool
 }
 
 func Lookup(file string) (*Dapperfile, error) {
@@ -138,6 +139,14 @@ func (d *Dapperfile) Run(commandArgs []string) error {
 			if err := d.exec("cp", name+":"+p, targetDir); err != nil {
 				logrus.Debugf("Error copying back '%s': %s", i, err)
 			}
+		}
+	}
+	if d.CommitContainer {
+		// TODO: arch?
+		buildImage := fmt.Sprintf("rancherbuild/%s", d.tag())
+		logrus.Infof("docker commit %s %s", name, buildImage)
+		if err := d.exec("commit", name, buildImage); err != nil {
+			logrus.Debugf("Error commiting %s to %s: %s", name, buildImage, err)
 		}
 	}
 

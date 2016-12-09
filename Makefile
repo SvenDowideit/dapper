@@ -10,6 +10,9 @@ TARGETS := $(shell ls scripts)
 $(TARGETS): .dapper
 	./.dapper $@
 
+release: .dapper
+	./.dapper --commit release
+
 trash: .dapper
 	./.dapper -m bind trash
 

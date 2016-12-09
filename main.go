@@ -80,6 +80,10 @@ func main() {
 			Name:  "quiet, q",
 			Usage: "Make Docker build quieter",
 		},
+		cli.BoolFlag{
+			Name:  "commit",
+			Usage: "Create an image of the build container after completion",
+		},
 	}
 	app.Action = func(c *cli.Context) {
 		exit(run(c))
@@ -110,6 +114,7 @@ func run(c *cli.Context) error {
 	dapperFile.Socket = c.Bool("socket")
 	dapperFile.NoOut = c.Bool("no-out")
 	dapperFile.Quiet = c.Bool("quiet")
+	dapperFile.CommitContainer = c.Bool("commit")
 
 	if shell {
 		return dapperFile.Shell(c.Args())
